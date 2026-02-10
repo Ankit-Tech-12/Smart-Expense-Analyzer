@@ -45,29 +45,31 @@ This project focuses on **clean state management, derived analytics, and scalabl
 
 ## 📂 Project Structure
 
-```txt
 src/
- ├─ App/
- │   ├─ components/
- │   │   ├─ AddExpense.jsx
- │   │   ├─ ExpenseList.jsx
- │   │   ├─ TotalExpense.jsx
- │   │   ├─ CategorySummary.jsx
- │   │   ├─ CategoryPieChart.jsx
- │   │   ├─ MonthlyComparison.jsx
- │   │   ├─ MonthlyBarChart.jsx
- │   │   └─ SpendingSpikeAlert.jsx
- │   ├─ features/
- │   │   ├─ expenses/
- │   │   │   ├─ expensesSlice.js
- │   │   │   └─ expensesSelectors.js
- │   │   └─ categories/
- │   │       └─ categoriesSlice.js
- │   ├─ utils/
- │   │   └─ localStorage.js
- │   ├─ store.js
- │   └─ App.jsx
  ├─ assets/
+ ├─ components/
+ │   ├─ AddExpense.jsx
+ │   ├─ AnimatedCard.jsx
+ │   ├─ Card.jsx
+ │   ├─ CategoryPieChart.jsx
+ │   ├─ CategorySummary.jsx
+ │   ├─ ExpensesList.jsx
+ │   ├─ Layout.jsx
+ │   ├─ MonthlyBarChart.jsx
+ │   ├─ MonthlyComparison.jsx
+ │   ├─ Navbar.jsx
+ │   ├─ Sidebar.jsx
+ │   ├─ SpendingSpikeAlert.jsx
+ │   ├─ Toast.jsx
+ │   └─ TotalExpense.jsx
+ ├─ pages/
+ │   ├─ AddExpensePage.jsx
+ │   ├─ AnalyticsPage.jsx
+ │   ├─ Dashboard.jsx
+ │   └─ ExpensesPage.jsx
+ ├─ utils/
+ │   └─ store.js
+ ├─ App.jsx
  ├─ index.css
  └─ main.jsx
 

@@ -25,7 +25,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         lg:translate-x-0 lg:static lg:min-h-screen`}
       >
         <h1 className="text-xl font-bold text-white mb-6">
-          💰 Expense App
+          💰 Expense Analyzer
         </h1>
 
         <nav className="space-y-2">
