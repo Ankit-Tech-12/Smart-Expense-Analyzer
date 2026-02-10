@@ -120,8 +120,5 @@ http://localhost:5173/
 
 ---
 
-## 📌 Resume Summary
-
-Smart Expense Analyzer demonstrates strong understanding of **React, Redux Toolkit, derived state, memoization, and real-world frontend architecture**.
 
  
