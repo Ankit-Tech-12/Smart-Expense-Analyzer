@@ -1,19 +1,18 @@
 const Card = ({ children, className = "" }) => {
-    return (
-        <div
-            className={`
-        bg-white dark:bg-gray-800
-        text-gray-800 dark:text-gray-100
-        rounded-xl shadow
-        p-3 sm:p-4 lg:p-6
-        mx-3 sm:mx-4 lg:mx-0
-        max-w-md lg:max-w-2xl
+  return (
+    <div
+      className={`
+        bg-[#131c2e]
+        border border-white/5
+        text-gray-100
+        rounded-2xl shadow-xl shadow-black/20
+        p-4 sm:p-5 lg:p-6
         ${className}
       `}
-        >
-            {children}
-        </div>
-    );
+    >
+      {children}
+    </div>
+  );
 };
 
 export default Card;

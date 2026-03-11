@@ -4,15 +4,19 @@ import AnimatedCard from "../components/AnimatedCard";
 
 const AnalyticsPage = () => {
   return (
-    <div className="space-y-4 sm:space-y-6">
-  <AnimatedCard>
-    <CategoryPieChart />
-  </AnimatedCard>
+    <div className="max-w-4xl mx-auto space-y-6">
+      <h1 className="text-xl font-semibold text-gray-200">Analytics</h1>
 
-  <AnimatedCard delay={0.08}>
-    <MonthlyBarChart />
-  </AnimatedCard>
-</div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <AnimatedCard delay={0}>
+          <CategoryPieChart />
+        </AnimatedCard>
+
+        <AnimatedCard delay={0.08}>
+          <MonthlyBarChart />
+        </AnimatedCard>
+      </div>
+    </div>
   );
 };
 

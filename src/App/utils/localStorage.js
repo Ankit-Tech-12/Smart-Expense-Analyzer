@@ -13,7 +13,7 @@ export const saveState = (state) => {
     const serializedState = JSON.stringify(state);
     localStorage.setItem("expenseAppState", serializedState);
   } catch (err) {
-    // ignore write errors
+    
   }
 };
 
