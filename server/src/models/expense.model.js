@@ -13,13 +13,13 @@ const expenseSchema = new Schema({
         type: String,
         required: true,
         enum: [
-            "Food",
-            "Transport",
-            "Rent",
-            "Shopping",
-            "Health",
-            "Entertainment",
-            "Other",
+            "food",
+            "transport",
+            "rent",
+            "shopping",
+            "health",
+            "entertainment",
+            "other",
         ],
     }
 }, { timestamps: true })
