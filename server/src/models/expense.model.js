@@ -21,6 +21,10 @@ const expenseSchema = new Schema({
             "entertainment",
             "other",
         ],
+    },
+    owner:{
+        type :Schema.Types.ObjectId,
+        ref:"User"
     }
 }, { timestamps: true })
 
