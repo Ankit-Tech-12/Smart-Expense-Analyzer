@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { selectCategoryTotals } from "../App/features/expenses/expensesSelector";
+import { selectCategoryTotals } from "../features/expenses/expensesSelector";
 import Card from "./Card";
 
 const COLORS = [

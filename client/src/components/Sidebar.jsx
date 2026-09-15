@@ -1,12 +1,28 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../features/auth/authSlice.js";
+import { logoutUser } from "../api/auth.api.js";
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const linkClass = ({ isActive }) =>
-    `block px-4 py-2 rounded-md transition ${
-      isActive
-        ? "bg-blue-600 text-white"
-        : "text-gray-300 hover:bg-gray-700 hover:text-white"
+    `block px-4 py-2 rounded-md transition ${isActive
+      ? "bg-blue-600 text-white"
+      : "text-gray-300 hover:bg-gray-700 hover:text-white"
     }`;
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+
+      dispatch(logout());
+
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -42,6 +58,13 @@ const Sidebar = ({ isOpen, onClose }) => {
             Analytics
           </NavLink>
         </nav>
+        <button
+          onClick={handleLogout}
+          className="block w-full text-left px-4 py-2 rounded-md
+    text-red-400 hover:bg-red-500/10 hover:text-red-300 transition"
+        >
+          Logout
+        </button>
       </aside>
     </>
   );

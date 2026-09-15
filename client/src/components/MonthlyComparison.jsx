@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { selectMonthlyComparison } from "../App/features/expenses/expensesSelector";
+import { selectMonthlyComparison } from "../features/expenses/expensesSelector";
 import Card from "./Card";
 
 const MonthlyComparison = () => {

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addExpense } from "../App/features/expenses/expensesSlice";
+import { addExpense } from "../features/expenses/expensesSlice";
+import { createExpense } from "../api/expense.api";
 import Toast from "./Toast";
 
 const inputClass =
@@ -16,26 +17,34 @@ const AddExpense = () => {
   const [date, setDate] = useState("");
   const [note, setNote] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    dispatch(
-      addExpense({
-        id: Date.now(),
-        amount: Number(amount),
-        category,
-        date,
-        note,
-      })
-    );
+  try {
+    const response = await createExpense({
+      amount: Number(amount),
+      category: category.toLowerCase(),
+      date,
+      note,
+    });
+
+    dispatch(addExpense(response.data));
 
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 2500);
+
+    setTimeout(() => {
+      setShowToast(false);
+    }, 2500);
+
     setAmount("");
     setCategory("");
     setDate("");
     setNote("");
-  };
+
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   return (
     <div className="max-w-md mx-auto mt-8">

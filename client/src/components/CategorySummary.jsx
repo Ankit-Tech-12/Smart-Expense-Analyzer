@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { selectCategoryTotals } from "../App/features/expenses/expensesSelector";
+import { selectCategoryTotals } from "../features/expenses/expensesSelector";
 import Card from "./Card";
 
 const CategorySummary = () => {

@@ -22,9 +22,14 @@ const expenseSchema = new Schema({
             "other",
         ],
     },
-    owner:{
-        type :Schema.Types.ObjectId,
-        ref:"User"
+    date: {
+        type: String,
+        required: true,
+        match: /^\d{4}-\d{2}-\d{2}$/
+    },
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
     }
 }, { timestamps: true })
 

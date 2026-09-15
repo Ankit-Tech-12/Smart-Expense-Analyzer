@@ -85,7 +85,7 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(401,"Invalid Password");
     }
 
-    const {accessToken,refreshToken}=generateToken(user._id);
+    const {accessToken,refreshToken}=await generateToken(user._id);
 
     const data = safeUser(user);
     return res
@@ -93,9 +93,49 @@ const loginUser = asyncHandler(async (req, res) => {
     .cookie("accessToken",accessToken,cookieOptions)
     .cookie("refreshToken",refreshToken,cookieOptions)
     .json(new ApiResponse(200,data,"User loggin"))
-})
+});
+
+//logout
+const logoutUser = asyncHandler(async (req, res) => {
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $unset: {
+                refreshToken: 1
+            }
+        }
+    );
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", cookieOptions)
+        .clearCookie("refreshToken", cookieOptions)
+        .json(
+            new ApiResponse(
+                200,
+                null,
+                "User logged out successfully"
+            )
+        );
+});
+
+//get current user
+const getCurrentUser = asyncHandler(async (req, res) => {
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                req.user,
+                "Current user fetched successfully"
+            )
+        );
+});
 
 export {
     registration,
-    loginUser
+    loginUser,
+    logoutUser,
+    getCurrentUser,
 }

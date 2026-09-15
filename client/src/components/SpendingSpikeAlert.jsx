@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { selectSpendingSpike } from "../App/features/expenses/expensesSelector";
+import { selectSpendingSpike } from "../features/expenses/expensesSelector";
 import Card from "./Card";
 import { motion, AnimatePresence } from "framer-motion";
 

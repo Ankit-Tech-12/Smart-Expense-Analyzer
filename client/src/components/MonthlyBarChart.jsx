@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip,
   CartesianGrid, ResponsiveContainer, Cell,
 } from "recharts";
-import { selectMonthlyComparison } from "../App/features/expenses/expensesSelector";
+import { selectMonthlyComparison } from "../features/expenses/expensesSelector";
 import Card from "./Card";
 
 const CustomTooltip = ({ active, payload, label }) => {
