@@ -25,3 +25,8 @@ dist-ssr
 
 #File
 information.txt
+
+
+.env
+.env.local
+.env.*.local
