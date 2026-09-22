@@ -1,15 +1,22 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useState } from "react";
+
 import { logout } from "../features/auth/authSlice.js";
 import { logoutUser } from "../api/auth.api.js";
+import ConfirmModal from "./ConfirmModal.jsx";
 
 const Sidebar = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const linkClass = ({ isActive }) =>
-    `block px-4 py-2 rounded-md transition ${isActive
-      ? "bg-blue-600 text-white"
-      : "text-gray-300 hover:bg-gray-700 hover:text-white"
+    `block px-4 py-2 rounded-md transition ${
+      isActive
+        ? "bg-blue-600 text-white"
+        : "text-gray-300 hover:bg-gray-700 hover:text-white"
     }`;
 
   const handleLogout = async () => {
@@ -17,6 +24,8 @@ const Sidebar = ({ isOpen, onClose }) => {
       await logoutUser();
 
       dispatch(logout());
+
+      setShowLogoutModal(false);
 
       navigate("/login");
     } catch (error) {
@@ -48,24 +57,35 @@ const Sidebar = ({ isOpen, onClose }) => {
           <NavLink to="/" onClick={onClose} className={linkClass}>
             Dashboard
           </NavLink>
+
           <NavLink to="/add" onClick={onClose} className={linkClass}>
             Add Expense
           </NavLink>
+
           <NavLink to="/expenses" onClick={onClose} className={linkClass}>
             Expenses
           </NavLink>
+
           <NavLink to="/analytics" onClick={onClose} className={linkClass}>
             Analytics
           </NavLink>
         </nav>
+
         <button
-          onClick={handleLogout}
+          onClick={() => setShowLogoutModal(true)}
           className="block w-full text-left px-4 py-2 rounded-md
-    text-red-400 hover:bg-red-500/10 hover:text-red-300 transition"
+          text-red-400 hover:bg-red-500/10 hover:text-red-300 transition"
         >
           Logout
         </button>
       </aside>
+
+      {/* Logout Confirmation Modal */}
+      <ConfirmModal
+        show={showLogoutModal}
+        onCancel={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+      />
     </>
   );
 };
