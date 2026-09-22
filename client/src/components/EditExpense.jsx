@@ -95,7 +95,6 @@ const EditExpense = () => {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className={`${inputClass} appearance-none`}
-            required
           >
             <option
               value=""
