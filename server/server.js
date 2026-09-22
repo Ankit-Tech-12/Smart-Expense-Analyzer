@@ -1,6 +1,4 @@
-import dotenv from "dotenv"
-dotenv.config();
-
+// console.log("ORIGIN_URI:", process.env.ORIGIN_URI);
 import app from "./src/app.js";
 import { connectDb } from "./src/db/store.js";
 

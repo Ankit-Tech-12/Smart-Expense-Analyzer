@@ -1,7 +1,12 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cookieParse from "cookie-parser"
 import cors from "cors";
 const app= express();
+
+// console.log("ORIGIN_URI:", process.env.ORIGIN_URI);
 
 app.use(
   cors({
