@@ -24,3 +24,12 @@ export const deleteExpense = async (id) => {
 
     return response.data;
 };
+
+export const updateExpense = async (id, expenseData) => {
+    const response = await api.put(
+        `/expense/update/${id}`,
+        expenseData
+    );
+
+    return response.data;
+};

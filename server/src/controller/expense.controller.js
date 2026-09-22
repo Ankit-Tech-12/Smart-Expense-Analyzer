@@ -76,8 +76,53 @@ const deleteExpense = asyncHandler(async (req, res) => {
         );
 });
 
+
+// updating expense
+const updateExpense = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { amount, note, category, date } = req.body;
+
+    const updateData = {};
+
+    if (amount !== undefined) updateData.amount = amount;
+    if (note !== undefined) updateData.note = note;
+    if (category !== undefined) {
+        updateData.category = category.trim().toLowerCase();
+    }
+    if (date !== undefined) updateData.date = date;
+
+    if (Object.keys(updateData).length === 0) {
+        throw new ApiError(400, "No data provided for update");
+    }
+
+    const expense = await Expense.findOneAndUpdate(
+        {
+            _id: id,
+            owner: req.user._id,
+        },
+        updateData,
+        {
+            new: true,
+            runValidators: true,
+        }
+    );
+
+    if (!expense) {
+        throw new ApiError(404, "Expense not found");
+    }
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            expense,
+            "Expense updated successfully"
+        )
+    );
+});
+
 export {
     createExpense,
     getExpenseList,
-    deleteExpense
+    deleteExpense,
+    updateExpense
 }

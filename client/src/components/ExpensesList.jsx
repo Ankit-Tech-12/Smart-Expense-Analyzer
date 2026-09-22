@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { removeExpense } from "../features/expenses/expensesSlice";
 import { deleteExpense } from "../api/expense.api";
@@ -17,6 +18,7 @@ const categoryColors = {
 
 const ExpenseList = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const expenses = useSelector(
     (state) => state.expenses.expenses
@@ -26,13 +28,10 @@ const ExpenseList = () => {
 
   const handleDelete = async (id) => {
     try {
-      // Delete from database
       await deleteExpense(id);
 
-      // Delete from Redux
       dispatch(removeExpense(id));
 
-      // Show success toast
       setShowToast(true);
 
       setTimeout(() => {
@@ -42,6 +41,10 @@ const ExpenseList = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/expenses/edit/${id}`);
   };
 
   return (
@@ -106,6 +109,15 @@ const ExpenseList = () => {
                         ₹{expense.amount.toLocaleString("en-IN")}
                       </span>
 
+                      {/* Edit */}
+                      <button
+                        onClick={() => handleEdit(expense._id)}
+                        className="text-xs text-gray-500 hover:text-blue-400 transition font-medium"
+                      >
+                        Edit
+                      </button>
+
+                      {/* Delete */}
                       <button
                         onClick={() =>
                           handleDelete(expense._id)
@@ -126,7 +138,6 @@ const ExpenseList = () => {
         </div>
       )}
 
-      {/* Delete success toast */}
       <Toast
         show={showToast}
         message="Expense deleted successfully 🗑️"

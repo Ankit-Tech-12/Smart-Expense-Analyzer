@@ -1,7 +1,8 @@
 import { 
     createExpense, 
     getExpenseList,
-    deleteExpense 
+    deleteExpense,
+    updateExpense 
 } from "../controller/expense.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 
@@ -17,6 +18,12 @@ router.delete(
     "/delete/:id",
     verifyJWT,
     deleteExpense
+);
+
+router.put(
+    "/update/:id",
+    verifyJWT,
+    updateExpense
 );
 
 
