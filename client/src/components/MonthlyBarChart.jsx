@@ -7,7 +7,6 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
-  Cell,
 } from "recharts";
 
 import { getMonthlyAnalytics } from "../api/finance.api";
@@ -21,7 +20,7 @@ const CustomTooltip = ({ active, payload, label }) => {
           {label}
         </p>
 
-        <p className="text-blue-400 font-semibold">
+        <p className="text-red-400 font-semibold">
           ₹{payload[0].value.toLocaleString("en-IN")}
         </p>
       </div>
@@ -48,55 +47,38 @@ const MonthlyBarChart = () => {
     loadMonthlyData();
   }, []);
 
-  const now = new Date();
+  const data = Object.keys(monthlyData)
+    .sort()
+    .map((month) => {
+      const [year, monthNumber] = month.split("-");
 
-  const currentMonthKey = `${now.getFullYear()}-${String(
-    now.getMonth() + 1
-  ).padStart(2, "0")}`;
+      const date = new Date(
+        Number(year),
+        Number(monthNumber) - 1
+      );
 
-  const previousDate = new Date(
-    now.getFullYear(),
-    now.getMonth() - 1,
-    1
-  );
+      return {
+        month: date.toLocaleString("en-IN", {
+          month: "short",
+          year: "numeric",
+        }),
+        amount: monthlyData[month].expense,
+      };
+    });
 
-  const previousMonthKey = `${previousDate.getFullYear()}-${String(
-    previousDate.getMonth() + 1
-  ).padStart(2, "0")}`;
-
-  const currentMonthTotal =
-    monthlyData[currentMonthKey]?.expense || 0;
-
-  const lastMonthTotal =
-    monthlyData[previousMonthKey]?.expense || 0;
-
-  if (currentMonthTotal === 0 && lastMonthTotal === 0) {
+  if (data.length === 0) {
     return null;
   }
-
-  const data = [
-    {
-      name: "Last Month",
-      amount: lastMonthTotal,
-    },
-    {
-      name: "This Month",
-      amount: currentMonthTotal,
-    },
-  ];
-
-  const isIncrease =
-    currentMonthTotal > lastMonthTotal;
 
   return (
     <Card>
       <h2 className="text-base font-semibold text-gray-200 mb-4">
-        Monthly Spending Comparison
+        Monthly Spending
       </h2>
 
       <div className="recharts-wrapper outline-none">
-        <ResponsiveContainer width="100%" height={260}>
-          <BarChart data={data} barSize={52}>
+        <ResponsiveContainer width="100%" height={280}>
+          <BarChart data={data} barSize={45}>
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="rgba(255,255,255,0.05)"
@@ -104,10 +86,10 @@ const MonthlyBarChart = () => {
             />
 
             <XAxis
-              dataKey="name"
+              dataKey="month"
               tick={{
                 fill: "#6b7280",
-                fontSize: 13,
+                fontSize: 12,
               }}
               axisLine={false}
               tickLine={false}
@@ -120,7 +102,7 @@ const MonthlyBarChart = () => {
               }}
               axisLine={false}
               tickLine={false}
-              tickFormatter={(v) => `₹${v}`}
+              tickFormatter={(value) => `₹${value}`}
             />
 
             <Tooltip
@@ -132,35 +114,16 @@ const MonthlyBarChart = () => {
 
             <Bar
               dataKey="amount"
+              fill="#3b82f6"
               radius={[6, 6, 0, 0]}
               activeBar={false}
-            >
-              <Cell fill="#3b82f6" />
-
-              <Cell
-                fill={
-                  isIncrease
-                    ? "#ef4444"
-                    : "#22c55e"
-                }
-              />
-            </Bar>
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       <p className="text-xs text-gray-500 mt-2 text-center">
-        This month's bar is{" "}
-        <span
-          className={
-            isIncrease
-              ? "text-red-400"
-              : "text-emerald-400"
-          }
-        >
-          {isIncrease ? "higher" : "lower"}
-        </span>{" "}
-        than last month
+        Monthly expense trend
       </p>
     </Card>
   );

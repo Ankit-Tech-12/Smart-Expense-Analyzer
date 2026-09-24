@@ -78,40 +78,51 @@ const renderCustomLabel = ({
   );
 };
 
-const CategoryPieChart = () => {
-  const [expenseByCategory, setExpenseByCategory] =
-    useState({});
+const CategoryPieChart = ({ type = "expense" }) => {
+  const [categoryData, setCategoryData] = useState({});
 
   useEffect(() => {
     const loadAnalytics = async () => {
       try {
-        const response =
-          await getFinancialAnalytics();
+        const response = await getFinancialAnalytics();
 
-        setExpenseByCategory(
-          response.data.expenseByCategory
-        );
+        if (type === "income") {
+          setCategoryData(
+            response.data.incomeByCategory
+          );
+        } else {
+          setCategoryData(
+            response.data.expenseByCategory
+          );
+        }
       } catch (error) {
         console.log(error);
       }
     };
 
     loadAnalytics();
-  }, []);
+  }, [type]);
 
-  const data = Object.keys(expenseByCategory).map(
+  const data = Object.keys(categoryData).map(
     (key) => ({
       name: key,
-      value: expenseByCategory[key],
+      value: categoryData[key],
     })
   );
 
-  if (data.length === 0) return null;
+  if (data.length === 0) {
+    return null;
+  }
+
+  const title =
+    type === "income"
+      ? "Income by Category"
+      : "Spending by Category";
 
   return (
     <Card>
       <h2 className="text-base font-semibold text-gray-200 mb-4">
-        Spending by Category
+        {title}
       </h2>
 
       <div className="recharts-wrapper outline-none">
