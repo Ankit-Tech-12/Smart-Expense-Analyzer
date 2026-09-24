@@ -123,6 +123,19 @@ const updateExpense = asyncHandler(async (req, res) => {
         note,
     } = req.body;
 
+    // Find existing transaction
+    const existingExpense = await Expense.findOne({
+        _id: id,
+        owner: req.user._id,
+    });
+
+    if (!existingExpense) {
+        throw new ApiError(
+            404,
+            "Transaction not found"
+        );
+    }
+
     const updateData = {};
 
     if (amount !== undefined) {
@@ -141,7 +154,9 @@ const updateExpense = asyncHandler(async (req, res) => {
     }
 
     if (category !== undefined) {
-        updateData.category = category.trim().toLowerCase();
+        updateData.category = category
+            .trim()
+            .toLowerCase();
     }
 
     if (source !== undefined) {
@@ -163,6 +178,51 @@ const updateExpense = asyncHandler(async (req, res) => {
         );
     }
 
+    // Determine what the transaction will look like
+    // after the update
+    const finalType =
+        updateData.type || existingExpense.type;
+
+    const finalCategory =
+        updateData.category || existingExpense.category;
+
+    // Validate category according to final type
+    if (finalType === "expense") {
+        const validCategories = [
+            "food",
+            "transport",
+            "rent",
+            "shopping",
+            "health",
+            "entertainment",
+            "other",
+        ];
+
+        if (!validCategories.includes(finalCategory)) {
+            throw new ApiError(
+                400,
+                "Invalid category for expense"
+            );
+        }
+    }
+
+    if (finalType === "income") {
+        const validCategories = [
+            "salary",
+            "freelance",
+            "business",
+            "investment",
+            "other",
+        ];
+
+        if (!validCategories.includes(finalCategory)) {
+            throw new ApiError(
+                400,
+                "Invalid category for income"
+            );
+        }
+    }
+
     const expense = await Expense.findOneAndUpdate(
         {
             _id: id,
@@ -170,17 +230,9 @@ const updateExpense = asyncHandler(async (req, res) => {
         },
         updateData,
         {
-            new: true,
-            runValidators: true,
+            returnDocument: "after"
         }
     );
-
-    if (!expense) {
-        throw new ApiError(
-            404,
-            "Transaction not found"
-        );
-    }
 
     return res.status(200).json(
         new ApiResponse(

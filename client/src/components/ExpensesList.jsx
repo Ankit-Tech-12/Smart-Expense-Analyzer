@@ -13,6 +13,12 @@ const categoryColors = {
   shopping: "bg-pink-500/10 text-pink-400",
   health: "bg-green-500/10 text-green-400",
   entertainment: "bg-yellow-500/10 text-yellow-400",
+
+  salary: "bg-emerald-500/10 text-emerald-400",
+  freelance: "bg-cyan-500/10 text-cyan-400",
+  business: "bg-indigo-500/10 text-indigo-400",
+  investment: "bg-violet-500/10 text-violet-400",
+
   other: "bg-gray-500/10 text-gray-400",
 };
 
@@ -37,7 +43,6 @@ const ExpenseList = () => {
       setTimeout(() => {
         setShowToast(false);
       }, 2500);
-
     } catch (error) {
       console.log(error);
     }
@@ -54,7 +59,7 @@ const ExpenseList = () => {
           <p className="text-4xl mb-3">🧾</p>
 
           <p className="text-sm">
-            No expenses yet. Add one to get started!
+            No transactions yet. Add one to get started!
           </p>
         </div>
       ) : (
@@ -62,7 +67,7 @@ const ExpenseList = () => {
           <div className="bg-[#131c2e] border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
 
             <h2 className="text-base font-semibold text-gray-200 px-5 py-4 border-b border-white/5">
-              Expense List
+              Transaction List
 
               <span className="ml-2 text-xs text-gray-500 font-normal">
                 {expenses.length} item
@@ -77,36 +82,67 @@ const ExpenseList = () => {
                   categoryColors[expense.category] ||
                   categoryColors.other;
 
+                const isIncome = expense.type === "income";
+
                 return (
                   <li
                     key={expense._id}
                     className="flex justify-between items-center px-5 py-3.5 hover:bg-white/[0.02] transition"
                   >
 
+                    {/* Left side */}
                     <div className="flex items-center gap-3">
 
-                      <span
-                        className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${colorClass}`}
-                      >
-                        {expense.category}
-                      </span>
+                      <div>
+                        {/* Type */}
+                        <p
+                          className={`text-xs font-medium mb-1 ${
+                            isIncome
+                              ? "text-emerald-400"
+                              : "text-red-400"
+                          }`}
+                        >
+                          {isIncome ? "Income" : "Expense"}
+                        </p>
+
+                        {/* Category */}
+                        <span
+                          className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${colorClass}`}
+                        >
+                          {expense.category}
+                        </span>
+                      </div>
 
                       <div>
                         <p className="text-sm text-gray-300">
                           {expense.note || "No note"}
                         </p>
 
-                        <p className="text-xs text-gray-500">
+                        {expense.source && (
+                          <p className="text-xs text-gray-500">
+                            {expense.source}
+                          </p>
+                        )}
+
+                        <p className="text-xs text-gray-500 mt-0.5">
                           {expense.date}
                         </p>
                       </div>
 
                     </div>
 
+                    {/* Right side */}
                     <div className="flex items-center gap-4">
 
-                      <span className="font-semibold text-emerald-400 text-sm">
-                        ₹{expense.amount.toLocaleString("en-IN")}
+                      <span
+                        className={`font-semibold text-sm ${
+                          isIncome
+                            ? "text-emerald-400"
+                            : "text-red-400"
+                        }`}
+                      >
+                        {isIncome ? "+" : "-"}₹
+                        {expense.amount.toLocaleString("en-IN")}
                       </span>
 
                       {/* Edit */}
@@ -140,7 +176,7 @@ const ExpenseList = () => {
 
       <Toast
         show={showToast}
-        message="Expense deleted successfully 🗑️"
+        message="Transaction deleted successfully 🗑️"
         type="error"
       />
     </>
