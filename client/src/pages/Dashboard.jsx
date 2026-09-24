@@ -1,4 +1,3 @@
-// import TotalExpense from "../components/TotalExpense";
 import CategorySummary from "../components/CategorySummary";
 import SpendingSpikeAlert from "../components/SpendingSpikeAlert";
 import MonthlyComparison from "../components/MonthlyComparison";
@@ -8,9 +7,6 @@ import FinancialSummary from "../components/FinancialSummary";
 const Dashboard = () => {
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* <AnimatedCard delay={0}>
-        <TotalExpense />
-      </AnimatedCard> */}
       <AnimatedCard delay={0}>
         <FinancialSummary />
       </AnimatedCard>
@@ -21,10 +17,16 @@ const Dashboard = () => {
         <CategorySummary />
       </AnimatedCard>
 
-      <AnimatedCard delay={0.1}>
-        <MonthlyComparison />
-      </AnimatedCard>
+      {/* Monthly Comparisons */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <AnimatedCard delay={0.1}>
+          <MonthlyComparison type="expense" />
+        </AnimatedCard>
 
+        <AnimatedCard delay={0.15}>
+          <MonthlyComparison type="income" />
+        </AnimatedCard>
+      </div>
     </div>
   );
 };
