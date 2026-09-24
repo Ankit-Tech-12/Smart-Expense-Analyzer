@@ -6,25 +6,43 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 
 //creating expense in list
 const createExpense = asyncHandler(async (req, res) => {
-    const { amount, note, category, date } = req.body;
+    const {
+        amount,
+        type = "expense",
+        category,
+        source,
+        date,
+        note,
+    } = req.body;
 
     if (!amount || !category || !date) {
-        throw new ApiError(400, "Amount and category are required");
+        throw new ApiError(
+            400,
+            "Amount, category and date are required"
+        );
     }
 
+    if (!["income", "expense"].includes(type)) {
+        throw new ApiError(
+            400,
+            "Invalid transaction type"
+        );
+    }
 
     const data = await Expense.create({
         amount,
-        note,
+        type,
         category: category.trim().toLowerCase(),
+        source: source?.trim(),
         date,
-        owner: req.user._id
+        note,
+        owner: req.user._id,
     });
 
     if (!data) {
         throw new ApiError(
             400,
-            "Expense creation failed for db"
+            "Transaction creation failed for db"
         );
     }
 
@@ -34,23 +52,38 @@ const createExpense = asyncHandler(async (req, res) => {
             new ApiResponse(
                 201,
                 data,
-                "Expense created successfully"
+                `${type === "income" ? "Income" : "Expense"} created successfully`
             )
         );
 });
 
-// getting expense list
-const getExpenseList = asyncHandler( async (req, res) => {
-    const data= await Expense.find({
-        owner:req.user._id
-    }).sort({ createdAt:-1 });
-    
-    return res
-    .status(200)
-    .json(
-        new ApiResponse(200, data, "Expense list fetched successfully")
-    )
-})
+// getting expense list also filter by type
+const getExpenseList = asyncHandler(async (req, res) => {
+    const { type } = req.query;
+
+    const filter = {
+        owner: req.user._id,
+    };
+
+    if (type) {
+        if (!["income", "expense"].includes(type)) {
+            throw new ApiError(400, "Invalid transaction type");
+        }
+
+        filter.type = type;
+    }
+
+    const data = await Expense.find(filter)
+        .sort({ date: -1, createdAt: -1 });
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            data,
+            "Transaction list fetched successfully"
+        )
+    );
+});
 
 //deleting expense from list
 const deleteExpense = asyncHandler(async (req, res) => {
@@ -80,19 +113,54 @@ const deleteExpense = asyncHandler(async (req, res) => {
 // updating expense
 const updateExpense = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { amount, note, category, date } = req.body;
+
+    const {
+        amount,
+        type,
+        category,
+        source,
+        date,
+        note,
+    } = req.body;
 
     const updateData = {};
 
-    if (amount !== undefined) updateData.amount = amount;
-    if (note !== undefined) updateData.note = note;
+    if (amount !== undefined) {
+        updateData.amount = amount;
+    }
+
+    if (type !== undefined) {
+        if (!["income", "expense"].includes(type)) {
+            throw new ApiError(
+                400,
+                "Invalid transaction type"
+            );
+        }
+
+        updateData.type = type;
+    }
+
     if (category !== undefined) {
         updateData.category = category.trim().toLowerCase();
     }
-    if (date !== undefined) updateData.date = date;
+
+    if (source !== undefined) {
+        updateData.source = source.trim();
+    }
+
+    if (date !== undefined) {
+        updateData.date = date;
+    }
+
+    if (note !== undefined) {
+        updateData.note = note;
+    }
 
     if (Object.keys(updateData).length === 0) {
-        throw new ApiError(400, "No data provided for update");
+        throw new ApiError(
+            400,
+            "No data provided for update"
+        );
     }
 
     const expense = await Expense.findOneAndUpdate(
@@ -108,14 +176,127 @@ const updateExpense = asyncHandler(async (req, res) => {
     );
 
     if (!expense) {
-        throw new ApiError(404, "Expense not found");
+        throw new ApiError(
+            404,
+            "Transaction not found"
+        );
     }
 
     return res.status(200).json(
         new ApiResponse(
             200,
             expense,
-            "Expense updated successfully"
+            "Transaction updated successfully"
+        )
+    );
+});
+
+// fetchinng finance summary
+const getFinancialSummary = asyncHandler(async (req, res) => {
+    const transactions = await Expense.find({
+        owner: req.user._id,
+    });
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    transactions.forEach((transaction) => {
+        if (transaction.type === "income") {
+            totalIncome += transaction.amount;
+        }
+
+        if (transaction.type === "expense") {
+            totalExpense += transaction.amount;
+        }
+    });
+
+    const balance = totalIncome - totalExpense;
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                totalIncome,
+                totalExpense,
+                balance,
+            },
+            "Financial summary fetched successfully"
+        )
+    );
+});
+
+//fetching financial analytice based on cateogry or source
+const getFinancialAnalytics = asyncHandler(async (req, res) => {
+    const transactions = await Expense.find({
+        owner: req.user._id,
+    });
+
+    const incomeByCategory = {};
+    const expenseByCategory = {};
+
+    transactions.forEach((transaction) => {
+        const category = transaction.category;
+
+        if (transaction.type === "income") {
+            incomeByCategory[category] =
+                (incomeByCategory[category] || 0) + transaction.amount;
+        }
+
+        if (transaction.type === "expense") {
+            expenseByCategory[category] =
+                (expenseByCategory[category] || 0) + transaction.amount;
+        }
+    });
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                incomeByCategory,
+                expenseByCategory,
+            },
+            "Financial analytics fetched successfully"
+        )
+    );
+});
+
+// fetching total monthly income and expense
+const getMonthlyAnalytics = asyncHandler(async (req, res) => {
+    const transactions = await Expense.find({
+        owner: req.user._id,
+    });
+
+    const monthlyData = {};
+
+    transactions.forEach((transaction) => {
+        const month = transaction.date.slice(0, 7);
+
+        if (!monthlyData[month]) {
+            monthlyData[month] = {
+                income: 0,
+                expense: 0,
+                balance: 0,
+            };
+        }
+
+        if (transaction.type === "income") {
+            monthlyData[month].income += transaction.amount;
+        }
+
+        if (transaction.type === "expense") {
+            monthlyData[month].expense += transaction.amount;
+        }
+
+        monthlyData[month].balance =
+            monthlyData[month].income -
+            monthlyData[month].expense;
+    });
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            monthlyData,
+            "Monthly analytics fetched successfully"
         )
     );
 });
@@ -124,5 +305,8 @@ export {
     createExpense,
     getExpenseList,
     deleteExpense,
-    updateExpense
+    updateExpense,
+    getFinancialSummary,
+    getFinancialAnalytics,
+    getMonthlyAnalytics
 }

@@ -2,7 +2,10 @@ import {
     createExpense, 
     getExpenseList,
     deleteExpense,
-    updateExpense 
+    updateExpense,
+    getFinancialSummary,
+    getFinancialAnalytics, 
+    getMonthlyAnalytics
 } from "../controller/expense.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 
@@ -24,6 +27,24 @@ router.put(
     "/update/:id",
     verifyJWT,
     updateExpense
+);
+
+router.get(
+    "/summary",
+    verifyJWT,
+    getFinancialSummary
+);
+
+router.get(
+    "/analytics",
+    verifyJWT,
+    getFinancialAnalytics
+);
+
+router.get(
+    "/monthly",
+    verifyJWT,
+    getMonthlyAnalytics
 );
 
 
