@@ -9,7 +9,7 @@ const Layout = () => {
     <div className="min-h-screen bg-[#0f1623] text-gray-100 flex">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col lg:ml-64">
         {/* Top bar (mobile only) */}
         <header className="lg:hidden bg-[#131c2e] border-b border-white/5 px-4 py-3 flex items-center gap-3">
           <button

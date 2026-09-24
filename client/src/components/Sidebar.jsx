@@ -13,10 +13,9 @@ const Sidebar = ({ isOpen, onClose }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const linkClass = ({ isActive }) =>
-    `block px-4 py-2 rounded-md transition ${
-      isActive
-        ? "bg-blue-600 text-white"
-        : "text-gray-300 hover:bg-gray-700 hover:text-white"
+    `block px-4 py-2 rounded-md transition ${isActive
+      ? "bg-blue-600 text-white"
+      : "text-gray-300 hover:bg-gray-700 hover:text-white"
     }`;
 
   const handleLogout = async () => {
@@ -47,7 +46,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         className={`fixed z-50 inset-y-0 left-0 w-64 bg-gray-900 p-4
         transform transition-transform duration-300
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0 lg:static lg:min-h-screen`}
+        lg:translate-x-0 lg:fixed lg:min-h-screen`}
       >
         <h1 className="text-xl font-bold text-white mb-6">
           💰 Expense Analyzer
