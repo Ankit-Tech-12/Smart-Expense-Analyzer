@@ -7,12 +7,13 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
 
 import { getMonthlyAnalytics } from "../api/finance.api";
 import Card from "./Card";
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label, type }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#1e2d45] border border-white/10 rounded-xl px-3 py-2 text-sm shadow-xl">
@@ -20,7 +21,13 @@ const CustomTooltip = ({ active, payload, label }) => {
           {label}
         </p>
 
-        <p className="text-red-400 font-semibold">
+        <p
+          className={`font-semibold ${
+            type === "income"
+              ? "text-emerald-400"
+              : "text-red-400"
+          }`}
+        >
           ₹{payload[0].value.toLocaleString("en-IN")}
         </p>
       </div>
@@ -30,7 +37,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const MonthlyBarChart = () => {
+const MonthlyBarChart = ({ type = "expense" }) => {
   const [monthlyData, setMonthlyData] = useState({});
 
   useEffect(() => {
@@ -47,38 +54,64 @@ const MonthlyBarChart = () => {
     loadMonthlyData();
   }, []);
 
-  const data = Object.keys(monthlyData)
-    .sort()
-    .map((month) => {
-      const [year, monthNumber] = month.split("-");
+  const now = new Date();
 
-      const date = new Date(
-        Number(year),
-        Number(monthNumber) - 1
-      );
+  const currentMonthKey = `${now.getFullYear()}-${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}`;
 
-      return {
-        month: date.toLocaleString("en-IN", {
-          month: "short",
-          year: "numeric",
-        }),
-        amount: monthlyData[month].expense,
-      };
-    });
+  const previousDate = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    1
+  );
 
-  if (data.length === 0) {
+  const previousMonthKey = `${previousDate.getFullYear()}-${String(
+    previousDate.getMonth() + 1
+  ).padStart(2, "0")}`;
+
+  const currentMonthTotal =
+    type === "income"
+      ? monthlyData[currentMonthKey]?.income || 0
+      : monthlyData[currentMonthKey]?.expense || 0;
+
+  const lastMonthTotal =
+    type === "income"
+      ? monthlyData[previousMonthKey]?.income || 0
+      : monthlyData[previousMonthKey]?.expense || 0;
+
+  if (currentMonthTotal === 0 && lastMonthTotal === 0) {
     return null;
   }
+
+  const data = [
+    {
+      name: "Last Month",
+      amount: lastMonthTotal,
+    },
+    {
+      name: "This Month",
+      amount: currentMonthTotal,
+    },
+  ];
+
+  const title =
+    type === "income"
+      ? "Monthly Income"
+      : "Monthly Spending";
+
+  const isIncrease =
+    currentMonthTotal > lastMonthTotal;
 
   return (
     <Card>
       <h2 className="text-base font-semibold text-gray-200 mb-4">
-        Monthly Spending
+        {title}
       </h2>
 
       <div className="recharts-wrapper outline-none">
-        <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={data} barSize={45}>
+        <ResponsiveContainer width="100%" height={260}>
+          <BarChart data={data} barSize={52}>
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="rgba(255,255,255,0.05)"
@@ -86,10 +119,10 @@ const MonthlyBarChart = () => {
             />
 
             <XAxis
-              dataKey="month"
+              dataKey="name"
               tick={{
                 fill: "#6b7280",
-                fontSize: 12,
+                fontSize: 13,
               }}
               axisLine={false}
               tickLine={false}
@@ -106,7 +139,9 @@ const MonthlyBarChart = () => {
             />
 
             <Tooltip
-              content={<CustomTooltip />}
+              content={
+                <CustomTooltip type={type} />
+              }
               cursor={{
                 fill: "rgba(255,255,255,0.03)",
               }}
@@ -114,16 +149,45 @@ const MonthlyBarChart = () => {
 
             <Bar
               dataKey="amount"
-              fill="#3b82f6"
               radius={[6, 6, 0, 0]}
               activeBar={false}
-            />
+            >
+              <Cell fill="#3b82f6" />
+
+              <Cell
+                fill={
+                  type === "income"
+                    ? isIncrease
+                      ? "#22c55e"
+                      : "#3b82f6"
+                    : isIncrease
+                    ? "#ef4444"
+                    : "#22c55e"
+                }
+              />
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       <p className="text-xs text-gray-500 mt-2 text-center">
-        Monthly expense trend
+        This month's{" "}
+        {type === "income"
+          ? "income"
+          : "spending"}{" "}
+        is{" "}
+        <span
+          className={
+            isIncrease
+              ? type === "income"
+                ? "text-emerald-400"
+                : "text-red-400"
+              : "text-emerald-400"
+          }
+        >
+          {isIncrease ? "higher" : "lower"}
+        </span>{" "}
+        than last month
       </p>
     </Card>
   );
