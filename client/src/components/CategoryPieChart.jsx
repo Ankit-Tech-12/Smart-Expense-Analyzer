@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import {
   PieChart,
   Pie,
@@ -7,7 +7,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { selectCategoryTotals } from "../features/expenses/expensesSelector";
+
+import { getFinancialAnalytics } from "../api/finance.api";
 import Card from "./Card";
 
 const COLORS = [
@@ -26,7 +27,10 @@ const CustomTooltip = ({ active, payload }) => {
 
     return (
       <div className="bg-[#1e2d45] border border-white/10 rounded-xl px-3 py-2 text-sm shadow-xl">
-        <p className="text-gray-200 font-medium">{name}</p>
+        <p className="text-gray-200 font-medium">
+          {name}
+        </p>
+
         <p className="text-emerald-400 font-semibold">
           ₹{value.toLocaleString("en-IN")}
         </p>
@@ -48,8 +52,10 @@ const renderCustomLabel = ({
   if (percent < 0.05) return null;
 
   const RADIAN = Math.PI / 180;
+
   const radius =
-    innerRadius + (outerRadius - innerRadius) * 0.5;
+    innerRadius +
+    (outerRadius - innerRadius) * 0.5;
 
   const x =
     cx + radius * Math.cos(-midAngle * RADIAN);
@@ -73,12 +79,32 @@ const renderCustomLabel = ({
 };
 
 const CategoryPieChart = () => {
-  const categoryTotals = useSelector(selectCategoryTotals);
+  const [expenseByCategory, setExpenseByCategory] =
+    useState({});
 
-  const data = Object.keys(categoryTotals).map((key) => ({
-    name: key,
-    value: categoryTotals[key],
-  }));
+  useEffect(() => {
+    const loadAnalytics = async () => {
+      try {
+        const response =
+          await getFinancialAnalytics();
+
+        setExpenseByCategory(
+          response.data.expenseByCategory
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadAnalytics();
+  }, []);
+
+  const data = Object.keys(expenseByCategory).map(
+    (key) => ({
+      name: key,
+      value: expenseByCategory[key],
+    })
+  );
 
   if (data.length === 0) return null;
 
@@ -105,12 +131,16 @@ const CategoryPieChart = () => {
               {data.map((_, index) => (
                 <Cell
                   key={index}
-                  fill={COLORS[index % COLORS.length]}
+                  fill={
+                    COLORS[index % COLORS.length]
+                  }
                 />
               ))}
             </Pie>
 
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip
+              content={<CustomTooltip />}
+            />
 
             <Legend
               formatter={(value) => (

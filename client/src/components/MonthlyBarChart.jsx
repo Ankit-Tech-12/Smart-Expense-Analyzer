@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -10,14 +10,16 @@ import {
   Cell,
 } from "recharts";
 
-import { selectMonthlyComparison } from "../features/expenses/expensesSelector";
+import { getMonthlyAnalytics } from "../api/finance.api";
 import Card from "./Card";
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-[#1e2d45] border border-white/10 rounded-xl px-3 py-2 text-sm shadow-xl">
-        <p className="text-gray-400 mb-1">{label}</p>
+        <p className="text-gray-400 mb-1">
+          {label}
+        </p>
 
         <p className="text-blue-400 font-semibold">
           ₹{payload[0].value.toLocaleString("en-IN")}
@@ -30,8 +32,43 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const MonthlyBarChart = () => {
-  const { currentMonthTotal, lastMonthTotal } =
-    useSelector(selectMonthlyComparison);
+  const [monthlyData, setMonthlyData] = useState({});
+
+  useEffect(() => {
+    const loadMonthlyData = async () => {
+      try {
+        const response = await getMonthlyAnalytics();
+
+        setMonthlyData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadMonthlyData();
+  }, []);
+
+  const now = new Date();
+
+  const currentMonthKey = `${now.getFullYear()}-${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}`;
+
+  const previousDate = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    1
+  );
+
+  const previousMonthKey = `${previousDate.getFullYear()}-${String(
+    previousDate.getMonth() + 1
+  ).padStart(2, "0")}`;
+
+  const currentMonthTotal =
+    monthlyData[currentMonthKey]?.expense || 0;
+
+  const lastMonthTotal =
+    monthlyData[previousMonthKey]?.expense || 0;
 
   if (currentMonthTotal === 0 && lastMonthTotal === 0) {
     return null;
@@ -99,6 +136,7 @@ const MonthlyBarChart = () => {
               activeBar={false}
             >
               <Cell fill="#3b82f6" />
+
               <Cell
                 fill={
                   isIncrease
