@@ -73,11 +73,11 @@ const Register = () => {
           </div>
 
           <h1 className="text-2xl font-bold text-white">
-            Expense Analyzer
+            Transaction Analyzer
           </h1>
 
           <p className="text-sm text-gray-500 mt-2">
-            Start managing your expenses smarter
+            Start managing your transactions smarter
           </p>
         </div>
 

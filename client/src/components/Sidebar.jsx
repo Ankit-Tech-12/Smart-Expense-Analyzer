@@ -49,7 +49,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         lg:translate-x-0 lg:fixed lg:min-h-screen`}
       >
         <h1 className="text-xl font-bold text-white mb-6">
-          💰 Expense Analyzer
+          💰 Transaction Analyzer
         </h1>
 
         <nav className="space-y-2">
@@ -58,11 +58,11 @@ const Sidebar = ({ isOpen, onClose }) => {
           </NavLink>
 
           <NavLink to="/add" onClick={onClose} className={linkClass}>
-            Add Expense
+            Add Transaction
           </NavLink>
 
           <NavLink to="/expenses" onClick={onClose} className={linkClass}>
-            Expenses
+            Transactions
           </NavLink>
 
           <NavLink to="/analytics" onClick={onClose} className={linkClass}>

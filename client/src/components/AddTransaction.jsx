@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { addExpense } from "../features/expenses/expensesSlice";
-import { createExpense } from "../api/expense.api";
+import { addTransaction } from "../features/transactions/transactionsSlice";
+import { createTransaction } from "../api/transaction.api";
 import TransactionForm from "./TransactionForm";
 import Toast from "./Toast";
 
-const AddExpense = () => {
+const AddTransaction = () => {
   const dispatch = useDispatch();
 
   const [showToast, setShowToast] = useState(false);
 
   const handleSubmit = async (transactionData) => {
     try {
-      const response = await createExpense(transactionData);
+      const response = await createTransaction(transactionData);
 
-      dispatch(addExpense(response.data));
+      dispatch(addTransaction(response.data));
 
       setShowToast(true);
 
@@ -42,4 +42,4 @@ const AddExpense = () => {
   );
 };
 
-export default AddExpense;
+export default AddTransaction;

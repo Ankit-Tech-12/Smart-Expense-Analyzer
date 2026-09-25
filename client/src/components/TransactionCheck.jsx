@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { getExpenses } from "../api/expense.api";
-import { setExpenses } from "../features/expenses/expensesSlice";
+import { getTransactions } from "../api/transaction.api";
+import { setTransaction } from "../features/transactions/transactionsSlice";
 
-const ExpenseCheck = () => {
+const TransactionCheck = () => {
     const dispatch = useDispatch();
 
     const isAuthenticated = useSelector(
@@ -14,20 +14,20 @@ const ExpenseCheck = () => {
     useEffect(() => {
         if (!isAuthenticated) return;
 
-        const loadExpenses = async () => {
+        const loadTransactions = async () => {
             try {
-                const response = await getExpenses();
+                const response = await getTransactions();
 
-                dispatch(setExpenses(response.data));
+                dispatch(setTransaction(response.data));
             } catch (error) {
                 console.log(error);
             }
         };
 
-        loadExpenses();
+        loadTransactions();
     }, [isAuthenticated, dispatch]);
 
     return null;
 };
 
-export default ExpenseCheck;
+export default TransactionCheck;

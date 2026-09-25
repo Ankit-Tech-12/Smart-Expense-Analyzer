@@ -1,21 +1,21 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import AuthCheck from "./components/AuthCheck";
-import ExpenseCheck from "./components/ExpenseCheck";
+import TransactionCheck from "./components/TransactionCheck";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
-import AddExpensePage from "./pages/AddExpensePage";
-import ExpensesPage from "./pages/ExpensesPage";
+import AddTransactionPage from "./pages/AddTransactionPage";
+import TransactionsPage from "./pages/TransactionsPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import EditExpense from "./components/EditExpense";
+import EditTransaction from "./components/EditTransaction";
 
 const App = () => {
   return (
     <BrowserRouter>
       <AuthCheck />
-      <ExpenseCheck />
+      <TransactionCheck />
       <Routes>
 
         {/* public route */}
@@ -26,10 +26,10 @@ const App = () => {
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/add" element={<AddExpensePage />} />
-            <Route path="/expenses" element={<ExpensesPage />} />
+            <Route path="/add" element={<AddTransactionPage />} />
+            <Route path="/expenses" element={<TransactionsPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
-            <Route path="/expenses/edit/:id" element={<EditExpense />} />
+            <Route path="/expenses/edit/:id" element={<EditTransaction />} />
           </Route>
         </Route>
       </Routes>

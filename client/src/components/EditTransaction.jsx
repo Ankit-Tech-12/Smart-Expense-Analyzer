@@ -2,28 +2,28 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import { updateExpense } from "../api/expense.api";
+import { updateTransaction } from "../api/transaction.api";
 import {
-  updateExpense as updateExpenseRedux,
-} from "../features/expenses/expensesSlice";
+  updateTransaction as updateTransactionRedux,
+} from "../features/transactions/transactionsSlice";
 
 import TransactionForm from "./TransactionForm";
 import Toast from "./Toast";
 
-const EditExpense = () => {
+const EditTransaction = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const expense = useSelector((state) =>
-    state.expenses.expenses.find(
-      (expense) => expense._id === id
+  const transaction = useSelector((state) =>
+    state.transactions.transactions.find(
+      (transaction) => transaction._id === id
     )
   );
 
   const [showToast, setShowToast] = useState(false);
 
-  if (!expense) {
+  if (!transaction) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center px-4">
         <div className="text-center">
@@ -56,19 +56,19 @@ const EditExpense = () => {
       const updateData = {};
 
       // Amount
-      if (transactionData.amount !== expense.amount) {
+      if (transactionData.amount !== transaction.amount) {
         updateData.amount = transactionData.amount;
       }
 
       // Type + Category
-      if (transactionData.type !== expense.type) {
+      if (transactionData.type !== transaction.type) {
         updateData.type = transactionData.type;
 
         // Type changed, so category must also be sent
         updateData.category =
           transactionData.category;
       } else if (
-        transactionData.category !== expense.category
+        transactionData.category !== transaction.category
       ) {
         updateData.category =
           transactionData.category;
@@ -77,20 +77,20 @@ const EditExpense = () => {
       // Source
       if (
         transactionData.source !==
-        (expense.source || "")
+        (transaction.source || "")
       ) {
         updateData.source = transactionData.source;
       }
 
       // Date
-      if (transactionData.date !== expense.date) {
+      if (transactionData.date !== transaction.date) {
         updateData.date = transactionData.date;
       }
 
       // Note
       if (
         transactionData.note !==
-        (expense.note || "")
+        (transaction.note || "")
       ) {
         updateData.note = transactionData.note;
       }
@@ -101,12 +101,12 @@ const EditExpense = () => {
         return;
       }
 
-      const response = await updateExpense(
+      const response = await updateTransaction(
         id,
         updateData
       );
 
-      dispatch(updateExpenseRedux(response.data));
+      dispatch(updateTransactionRedux(response.data));
 
       setShowToast(true);
 
@@ -123,7 +123,7 @@ const EditExpense = () => {
     <>
       <TransactionForm
         mode="edit"
-        initialData={expense}
+        initialData={transaction}
         onSubmit={handleSubmit}
         onCancel={() => navigate("/expenses")}
       />
@@ -136,4 +136,4 @@ const EditExpense = () => {
   );
 };
 
-export default EditExpense;
+export default EditTransaction;

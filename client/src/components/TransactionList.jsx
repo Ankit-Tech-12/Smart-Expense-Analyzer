@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { removeExpense } from "../features/expenses/expensesSlice";
-import { deleteExpense } from "../api/expense.api";
+import { removeTransaction } from "../features/transactions/transactionsSlice";
+import { deleteTransaction } from "../api/transaction.api";
 import Toast from "./Toast";
 
 const categoryColors = {
@@ -22,21 +22,21 @@ const categoryColors = {
   other: "bg-gray-500/10 text-gray-400",
 };
 
-const ExpenseList = () => {
+const TransactionList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const expenses = useSelector(
-    (state) => state.expenses.expenses
+  const transactions = useSelector(
+    (state) => state.transactions.transactions
   );
 
   const [showToast, setShowToast] = useState(false);
 
   const handleDelete = async (id) => {
     try {
-      await deleteExpense(id);
+      await deleteTransaction(id);
 
-      dispatch(removeExpense(id));
+      dispatch(removeTransaction(id));
 
       setShowToast(true);
 
@@ -54,7 +54,7 @@ const ExpenseList = () => {
 
   return (
     <>
-      {expenses.length === 0 ? (
+      {transactions.length === 0 ? (
         <div className="max-w-md mx-auto mt-10 px-4 text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center">
             <span className="text-3xl">🧾</span>
@@ -92,8 +92,8 @@ const ExpenseList = () => {
 
             <div className="self-start sm:self-auto px-3 py-1.5 rounded-full bg-white/5 border border-white/5">
               <span className="text-xs text-gray-400">
-                {expenses.length} transaction
-                {expenses.length !== 1 ? "s" : ""}
+                {transactions.length} transaction
+                {transactions.length !== 1 ? "s" : ""}
               </span>
             </div>
           </div>
@@ -101,16 +101,16 @@ const ExpenseList = () => {
           {/* Transaction container */}
           <div className="bg-[#131c2e] border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
             <ul className="divide-y divide-white/5">
-              {expenses.map((expense) => {
+              {transactions.map((transaction) => {
                 const colorClass =
-                  categoryColors[expense.category] ||
+                  categoryColors[transaction.category] ||
                   categoryColors.other;
 
-                const isIncome = expense.type === "income";
+                const isIncome = transaction.type === "income";
 
                 return (
                   <li
-                    key={expense._id}
+                    key={transaction._id}
                     className="group px-4 sm:px-5 py-4 hover:bg-white/[0.025] transition"
                   >
                     <div className="flex items-start gap-3 sm:gap-4">
@@ -142,21 +142,21 @@ const ExpenseList = () => {
                           <span
                             className={`text-[11px] sm:text-xs font-medium px-2 py-1 rounded-full capitalize ${colorClass}`}
                           >
-                            {expense.category}
+                            {transaction.category}
                           </span>
                         </div>
 
                         {/* Note */}
                         <p className="text-sm text-gray-200 font-medium truncate">
-                          {expense.note || "No note"}
+                          {transaction.note || "No note"}
                         </p>
 
                         {/* Source + Date */}
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1">
-                          {expense.source && (
+                          {transaction.source && (
                             <>
                               <span className="text-xs text-gray-500 truncate max-w-[150px] sm:max-w-xs">
-                                {expense.source}
+                                {transaction.source}
                               </span>
 
                               <span className="text-gray-700">
@@ -166,7 +166,7 @@ const ExpenseList = () => {
                           )}
 
                           <span className="text-xs text-gray-500">
-                            {expense.date}
+                            {transaction.date}
                           </span>
                         </div>
                       </div>
@@ -182,14 +182,14 @@ const ExpenseList = () => {
                           }`}
                         >
                           {isIncome ? "+" : "-"}₹
-                          {expense.amount.toLocaleString("en-IN")}
+                          {transaction.amount.toLocaleString("en-IN")}
                         </span>
 
                         {/* Actions */}
                         <div className="flex items-center gap-1 sm:gap-2">
                           <button
                             onClick={() =>
-                              handleEdit(expense._id)
+                              handleEdit(transaction._id)
                             }
                             className="px-2 py-1 rounded-md text-xs text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 transition"
                           >
@@ -198,7 +198,7 @@ const ExpenseList = () => {
 
                           <button
                             onClick={() =>
-                              handleDelete(expense._id)
+                              handleDelete(transaction._id)
                             }
                             className="px-2 py-1 rounded-md text-xs text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition"
                           >
@@ -224,4 +224,4 @@ const ExpenseList = () => {
   );
 };
 
-export default ExpenseList;
+export default TransactionList;

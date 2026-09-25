@@ -18,7 +18,7 @@ const Layout = () => {
           >
             ☰
           </button>
-          <span className="font-semibold text-white tracking-wide">💰 Expense Analyzer</span>
+          <span className="font-semibold text-white tracking-wide">💰 Transaction Analyzer</span>
         </header>
 
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">

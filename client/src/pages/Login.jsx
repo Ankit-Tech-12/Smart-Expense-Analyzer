@@ -60,11 +60,11 @@ const Login = () => {
           <div className="text-4xl mb-3">💰</div>
 
           <h1 className="text-2xl font-bold text-white">
-            Expense Analyzer
+            Transaction Analyzer
           </h1>
 
           <p className="text-sm text-gray-500 mt-2">
-            Welcome back! Manage your expenses smarter.
+            Welcome back! Manage your transactions smarter.
           </p>
         </div>
 

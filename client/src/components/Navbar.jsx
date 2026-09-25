@@ -12,10 +12,10 @@ const Navbar = () => {
         Dashboard
       </NavLink>
       <NavLink to="/add" className={linkClass}>
-        Add Expense
+        Add Transaction
       </NavLink>
       <NavLink to="/expenses" className={linkClass}>
-        Expenses
+        Transactions
       </NavLink>
       <NavLink to="/analytics" className={linkClass}>
         Analytics
