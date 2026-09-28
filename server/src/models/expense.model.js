@@ -1,27 +1,15 @@
 import mongoose, { Schema } from "mongoose";
+import {
+    expenseCategories,
+    incomeCategories,
+} from "../constants/transaction.constants.js";
 
-const expenseCategories = [
-    "food",
-    "transport",
-    "rent",
-    "shopping",
-    "health",
-    "entertainment",
-    "other",
-];
-
-const incomeCategories = [
-    "salary",
-    "freelance",
-    "business",
-    "investment",
-    "other",
-];
 
 const expenseSchema = new Schema({
     amount: {
         type: Number,
         required: true,
+        min: 0.01,
     },
     type: {
         type: String,

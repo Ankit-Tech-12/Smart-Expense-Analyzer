@@ -1,32 +1,32 @@
 import { 
-    createExpense, 
-    getExpenseList,
-    deleteExpense,
-    updateExpense,
+    createTransaction, 
+    getTransactionList,
+    deleteTransaction,
+    updateTransaction,
     getFinancialSummary,
     getFinancialAnalytics, 
     getMonthlyAnalytics
-} from "../controller/expense.controller.js";
+} from "../controller/transaction.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 
 import {Router} from "express"
 
 const router = Router()
 
-router.post("/create" ,verifyJWT ,createExpense);
+router.post("/create" ,verifyJWT ,createTransaction);
 
-router.get("/getExpenseList",verifyJWT ,getExpenseList);
+router.get("/getTransactionList",verifyJWT ,getTransactionList);
 
 router.delete(
     "/delete/:id",
     verifyJWT,
-    deleteExpense
+    deleteTransaction
 );
 
 router.put(
     "/update/:id",
     verifyJWT,
-    updateExpense
+    updateTransaction
 );
 
 router.get(

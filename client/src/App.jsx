@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Layout from "./components/Layout";
 import AuthCheck from "./components/AuthCheck";
 import TransactionCheck from "./components/TransactionCheck";
 import ProtectedRoute from "./components/ProtectedRoute";
+
 import Dashboard from "./pages/Dashboard";
 import AddTransactionPage from "./pages/AddTransactionPage";
 import TransactionsPage from "./pages/TransactionsPage";
@@ -14,24 +16,49 @@ import EditTransaction from "./components/EditTransaction";
 const App = () => {
   return (
     <BrowserRouter>
+
+      {/* App initialization */}
       <AuthCheck />
       <TransactionCheck />
+
       <Routes>
 
-        {/* public route */}
+        {/* Public routes */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
-        {/* ProtectedRoute */}
+        {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/add" element={<AddTransactionPage />} />
-            <Route path="/expenses" element={<TransactionsPage />} />
-            <Route path="/analytics" element={<AnalyticsPage />} />
-            <Route path="/expenses/edit/:id" element={<EditTransaction />} />
+
+            <Route
+              path="/"
+              element={<Dashboard />}
+            />
+
+            <Route
+              path="/add"
+              element={<AddTransactionPage />}
+            />
+
+            <Route
+              path="/expenses"
+              element={<TransactionsPage />}
+            />
+
+            <Route
+              path="/analytics"
+              element={<AnalyticsPage />}
+            />
+
+            <Route
+              path="/expenses/edit/:id"
+              element={<EditTransaction />}
+            />
+
           </Route>
         </Route>
+
       </Routes>
     </BrowserRouter>
   );

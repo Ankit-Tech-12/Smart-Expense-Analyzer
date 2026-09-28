@@ -3,9 +3,13 @@ import { asyncHandler } from "../utils/asyncHandler.js"
 import { ApiError } from "../utils/ApiError.js"
 import { Expense } from "../models/expense.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js"
+import {
+    expenseCategories,
+    incomeCategories,
+} from "../constants/transaction.constants.js";
 
 //creating expense in list
-const createExpense = asyncHandler(async (req, res) => {
+const createTransaction = asyncHandler(async (req, res) => {
     const {
         amount,
         type = "expense",
@@ -15,10 +19,31 @@ const createExpense = asyncHandler(async (req, res) => {
         note,
     } = req.body;
 
-    if (!amount || !category || !date) {
+    if (amount === undefined || amount === null) {
         throw new ApiError(
             400,
-            "Amount, category and date are required"
+            "Amount is required"
+        );
+    }
+
+    if (typeof amount !== "number" || amount <= 0) {
+        throw new ApiError(
+            400,
+            "Amount must be a positive number"
+        );
+    }
+
+    if (!category || typeof category !== "string") {
+        throw new ApiError(
+            400,
+            "Category is required"
+        );
+    }
+
+    if (!date || typeof date !== "string") {
+        throw new ApiError(
+            400,
+            "Date is required"
         );
     }
 
@@ -58,7 +83,7 @@ const createExpense = asyncHandler(async (req, res) => {
 });
 
 // getting expense list also filter by type
-const getExpenseList = asyncHandler(async (req, res) => {
+const getTransactionList = asyncHandler(async (req, res) => {
     const { type } = req.query;
 
     const filter = {
@@ -86,7 +111,7 @@ const getExpenseList = asyncHandler(async (req, res) => {
 });
 
 //deleting expense from list
-const deleteExpense = asyncHandler(async (req, res) => {
+const deleteTransaction = asyncHandler(async (req, res) => {
     const { id } = req.params;
 
     const expense = await Expense.findOneAndDelete({
@@ -111,7 +136,7 @@ const deleteExpense = asyncHandler(async (req, res) => {
 
 
 // updating expense
-const updateExpense = asyncHandler(async (req, res) => {
+const updateTransaction = asyncHandler(async (req, res) => {
     const { id } = req.params;
 
     const {
@@ -188,17 +213,7 @@ const updateExpense = asyncHandler(async (req, res) => {
 
     // Validate category according to final type
     if (finalType === "expense") {
-        const validCategories = [
-            "food",
-            "transport",
-            "rent",
-            "shopping",
-            "health",
-            "entertainment",
-            "other",
-        ];
-
-        if (!validCategories.includes(finalCategory)) {
+        if (!expenseCategories.includes(finalCategory)) {
             throw new ApiError(
                 400,
                 "Invalid category for expense"
@@ -207,15 +222,7 @@ const updateExpense = asyncHandler(async (req, res) => {
     }
 
     if (finalType === "income") {
-        const validCategories = [
-            "salary",
-            "freelance",
-            "business",
-            "investment",
-            "other",
-        ];
-
-        if (!validCategories.includes(finalCategory)) {
+        if (!incomeCategories.includes(finalCategory)) {
             throw new ApiError(
                 400,
                 "Invalid category for income"
@@ -354,10 +361,10 @@ const getMonthlyAnalytics = asyncHandler(async (req, res) => {
 });
 
 export {
-    createExpense,
-    getExpenseList,
-    deleteExpense,
-    updateExpense,
+    createTransaction,
+    getTransactionList,
+    deleteTransaction,
+    updateTransaction,
     getFinancialSummary,
     getFinancialAnalytics,
     getMonthlyAnalytics
