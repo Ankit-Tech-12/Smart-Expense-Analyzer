@@ -5,7 +5,7 @@ import {
 } from "../constants/transaction.constants.js";
 
 
-const expenseSchema = new Schema({
+const transactionSchema = new Schema({
     amount: {
         type: Number,
         required: true,
@@ -54,4 +54,10 @@ const expenseSchema = new Schema({
     }
 }, { timestamps: true })
 
-export const Expense = mongoose.model("Expense", expenseSchema);
+// Index for faster transaction queries
+transactionSchema.index({
+  owner: 1,
+  date: -1,
+});
+
+export const Transaction = mongoose.model("Transaction", transactionSchema);

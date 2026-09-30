@@ -1,7 +1,6 @@
-import mongoose from "mongoose";
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { ApiError } from "../utils/ApiError.js"
-import { Expense } from "../models/expense.model.js";
+import { Transaction } from "../models/transaction.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js"
 import {
     expenseCategories,
@@ -54,7 +53,7 @@ const createTransaction = asyncHandler(async (req, res) => {
         );
     }
 
-    const data = await Expense.create({
+    const data = await Transaction.create({
         amount,
         type,
         category: category.trim().toLowerCase(),
@@ -98,7 +97,7 @@ const getTransactionList = asyncHandler(async (req, res) => {
         filter.type = type;
     }
 
-    const data = await Expense.find(filter)
+    const data = await Transaction.find(filter)
         .sort({ date: -1, createdAt: -1 });
 
     return res.status(200).json(
@@ -114,13 +113,13 @@ const getTransactionList = asyncHandler(async (req, res) => {
 const deleteTransaction = asyncHandler(async (req, res) => {
     const { id } = req.params;
 
-    const expense = await Expense.findOneAndDelete({
+    const transaction = await Transaction.findOneAndDelete({
         _id: id,
         owner: req.user._id,
     });
 
-    if (!expense) {
-        throw new ApiError(404, "Expense not found");
+    if (!transaction) {
+        throw new ApiError(404, "Transaction not found");
     }
 
     return res
@@ -128,8 +127,8 @@ const deleteTransaction = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
-                expense,
-                "Expense deleted successfully"
+                transaction,
+                "Transaction deleted successfully"
             )
         );
 });
@@ -149,12 +148,12 @@ const updateTransaction = asyncHandler(async (req, res) => {
     } = req.body;
 
     // Find existing transaction
-    const existingExpense = await Expense.findOne({
+    const existingTransaction = await Transaction.findOne({
         _id: id,
         owner: req.user._id,
     });
 
-    if (!existingExpense) {
+    if (!existingTransaction) {
         throw new ApiError(
             404,
             "Transaction not found"
@@ -206,10 +205,10 @@ const updateTransaction = asyncHandler(async (req, res) => {
     // Determine what the transaction will look like
     // after the update
     const finalType =
-        updateData.type || existingExpense.type;
+        updateData.type || existingTransaction.type;
 
     const finalCategory =
-        updateData.category || existingExpense.category;
+        updateData.category || existingTransaction.category;
 
     // Validate category according to final type
     if (finalType === "expense") {
@@ -230,7 +229,7 @@ const updateTransaction = asyncHandler(async (req, res) => {
         }
     }
 
-    const expense = await Expense.findOneAndUpdate(
+    const transaction = await Transaction.findOneAndUpdate(
         {
             _id: id,
             owner: req.user._id,
@@ -244,7 +243,7 @@ const updateTransaction = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new ApiResponse(
             200,
-            expense,
+            transaction,
             "Transaction updated successfully"
         )
     );
@@ -252,7 +251,7 @@ const updateTransaction = asyncHandler(async (req, res) => {
 
 // fetchinng finance summary
 const getFinancialSummary = asyncHandler(async (req, res) => {
-    const transactions = await Expense.find({
+    const transactions = await Transaction.find({
         owner: req.user._id,
     });
 
@@ -286,7 +285,7 @@ const getFinancialSummary = asyncHandler(async (req, res) => {
 
 //fetching financial analytice based on cateogry or source
 const getFinancialAnalytics = asyncHandler(async (req, res) => {
-    const transactions = await Expense.find({
+    const transactions = await Transaction.find({
         owner: req.user._id,
     });
 
@@ -321,7 +320,7 @@ const getFinancialAnalytics = asyncHandler(async (req, res) => {
 
 // fetching total monthly income and expense
 const getMonthlyAnalytics = asyncHandler(async (req, res) => {
-    const transactions = await Expense.find({
+    const transactions = await Transaction.find({
         owner: req.user._id,
     });
 
