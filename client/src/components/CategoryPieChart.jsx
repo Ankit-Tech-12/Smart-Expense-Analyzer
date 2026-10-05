@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
 import {
   PieChart,
   Pie,
@@ -8,7 +9,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { getFinancialAnalytics } from "../api/finance.api";
 import Card from "./Card";
 
 const COLORS = [
@@ -79,29 +79,14 @@ const renderCustomLabel = ({
 };
 
 const CategoryPieChart = ({ type = "expense" }) => {
-  const [categoryData, setCategoryData] = useState({});
+  const categoryAnalytics = useSelector(
+    (state) => state.transactions.categoryAnalytics
+  );
 
-  useEffect(() => {
-    const loadAnalytics = async () => {
-      try {
-        const response = await getFinancialAnalytics();
-
-        if (type === "income") {
-          setCategoryData(
-            response.data.incomeByCategory
-          );
-        } else {
-          setCategoryData(
-            response.data.expenseByCategory
-          );
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    loadAnalytics();
-  }, [type]);
+  const categoryData =
+    type === "income"
+      ? categoryAnalytics.incomeByCategory
+      : categoryAnalytics.expenseByCategory;
 
   const data = Object.keys(categoryData).map(
     (key) => ({
@@ -142,9 +127,7 @@ const CategoryPieChart = ({ type = "expense" }) => {
               {data.map((_, index) => (
                 <Cell
                   key={index}
-                  fill={
-                    COLORS[index % COLORS.length]
-                  }
+                  fill={COLORS[index % COLORS.length]}
                 />
               ))}
             </Pie>

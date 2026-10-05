@@ -1,22 +1,10 @@
-import { useEffect, useState } from "react";
-import { getMonthlyAnalytics } from "../api/finance.api";
+import { useSelector } from "react-redux";
 import Card from "./Card";
 
 const MonthlyComparison = ({ type = "expense" }) => {
-  const [monthlyData, setMonthlyData] = useState({});
-
-  useEffect(() => {
-    const loadMonthlyData = async () => {
-      try {
-        const response = await getMonthlyAnalytics();
-        setMonthlyData(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    loadMonthlyData();
-  }, []);
+  const monthlyData = useSelector(
+    (state) => state.transactions.monthlyAnalytics
+  );
 
   // Get current month and previous month
   const now = new Date();
@@ -50,13 +38,9 @@ const MonthlyComparison = ({ type = "expense" }) => {
   const currentMonthTotal = currentMonth[type];
   const lastMonthTotal = previousMonth[type];
 
-  const difference =
-    currentMonthTotal - lastMonthTotal;
+  const difference = currentMonthTotal - lastMonthTotal;
 
-  if (
-    currentMonthTotal === 0 &&
-    lastMonthTotal === 0
-  ) {
+  if (currentMonthTotal === 0 && lastMonthTotal === 0) {
     return null;
   }
 
@@ -90,16 +74,12 @@ const MonthlyComparison = ({ type = "expense" }) => {
       ? "No change from last month"
       : isIncome
       ? isIncrease
-        ? `Income up ₹${difference.toLocaleString(
-            "en-IN"
-          )} from last month`
+        ? `Income up ₹${difference.toLocaleString("en-IN")} from last month`
         : `Income down ₹${Math.abs(
             difference
           ).toLocaleString("en-IN")} from last month`
       : isIncrease
-      ? `Spending up ₹${difference.toLocaleString(
-          "en-IN"
-        )} from last month`
+      ? `Spending up ₹${difference.toLocaleString("en-IN")} from last month`
       : `Spending down ₹${Math.abs(
           difference
         ).toLocaleString("en-IN")} from last month`;
@@ -130,10 +110,7 @@ const MonthlyComparison = ({ type = "expense" }) => {
           </p>
 
           <p className="text-lg font-bold text-white">
-            ₹
-            {currentMonthTotal.toLocaleString(
-              "en-IN"
-            )}
+            ₹{currentMonthTotal.toLocaleString("en-IN")}
           </p>
         </div>
 
@@ -144,10 +121,7 @@ const MonthlyComparison = ({ type = "expense" }) => {
           </p>
 
           <p className="text-lg font-bold text-white">
-            ₹
-            {lastMonthTotal.toLocaleString(
-              "en-IN"
-            )}
+            ₹{lastMonthTotal.toLocaleString("en-IN")}
           </p>
         </div>
       </div>

@@ -1,8 +1,20 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { getTransactions } from "../api/transaction.api";
-import { setTransaction } from "../features/transactions/transactionsSlice";
+import {
+    getTransactions,
+} from "../api/transaction.api";
+
+import {
+       getMonthlyAnalytics,
+       getFinancialAnalytics,
+} from "../api/finance.api"
+
+import {
+    setTransaction,
+    setMonthlyAnalytics,
+    setCategoryAnalytics,
+} from "../features/transactions/transactionsSlice";
 
 const TransactionCheck = () => {
     const dispatch = useDispatch();
@@ -14,17 +26,39 @@ const TransactionCheck = () => {
     useEffect(() => {
         if (!isAuthenticated) return;
 
-        const loadTransactions = async () => {
+        const loadTransactionData = async () => {
             try {
-                const response = await getTransactions();
+                const [
+                    transactionsResponse,
+                    monthlyResponse,
+                    categoryResponse,
+                ] = await Promise.all([
+                    getTransactions(),
+                    getMonthlyAnalytics(),
+                    getFinancialAnalytics(),
+                ]);
 
-                dispatch(setTransaction(response.data));
+                // Store transactions in Redux
+                dispatch(
+                    setTransaction(transactionsResponse.data)
+                );
+
+                // Store monthly analytics in Redux
+                dispatch(
+                    setMonthlyAnalytics(monthlyResponse.data)
+                );
+
+                // Store category analytics in Redux
+                dispatch(
+                    setCategoryAnalytics(categoryResponse.data)
+                );
+
             } catch (error) {
                 console.log(error);
             }
         };
 
-        loadTransactions();
+        loadTransactionData();
     }, [isAuthenticated, dispatch]);
 
     return null;

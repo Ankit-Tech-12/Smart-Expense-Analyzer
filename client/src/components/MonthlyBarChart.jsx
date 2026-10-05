@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
 import {
   BarChart,
   Bar,
@@ -10,7 +11,6 @@ import {
   Cell,
 } from "recharts";
 
-import { getMonthlyAnalytics } from "../api/finance.api";
 import Card from "./Card";
 
 const CustomTooltip = ({ active, payload, label, type }) => {
@@ -38,21 +38,9 @@ const CustomTooltip = ({ active, payload, label, type }) => {
 };
 
 const MonthlyBarChart = ({ type = "expense" }) => {
-  const [monthlyData, setMonthlyData] = useState({});
-
-  useEffect(() => {
-    const loadMonthlyData = async () => {
-      try {
-        const response = await getMonthlyAnalytics();
-
-        setMonthlyData(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    loadMonthlyData();
-  }, []);
+  const monthlyData = useSelector(
+    (state) => state.transactions.monthlyAnalytics
+  );
 
   const now = new Date();
 

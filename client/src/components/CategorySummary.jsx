@@ -1,33 +1,17 @@
-import { useEffect, useState } from "react";
-import { getFinancialAnalytics } from "../api/finance.api";
+import { useSelector } from "react-redux";
 import Card from "./Card";
 
 const CategorySummary = () => {
-  const [analytics, setAnalytics] = useState({
-    incomeByCategory: {},
-    expenseByCategory: {},
-  });
-
-  useEffect(() => {
-    const loadAnalytics = async () => {
-      try {
-        const response = await getFinancialAnalytics();
-
-        setAnalytics(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    loadAnalytics();
-  }, []);
+  const categoryAnalytics = useSelector(
+    (state) => state.transactions.categoryAnalytics
+  );
 
   const incomeCategories = Object.keys(
-    analytics.incomeByCategory
+    categoryAnalytics.incomeByCategory
   );
 
   const expenseCategories = Object.keys(
-    analytics.expenseByCategory
+    categoryAnalytics.expenseByCategory
   );
 
   const hasIncome = incomeCategories.length > 0;
@@ -36,6 +20,16 @@ const CategorySummary = () => {
   if (!hasIncome && !hasExpenses) {
     return null;
   }
+
+  // Calculate total income once
+  const totalIncome = Object.values(
+    categoryAnalytics.incomeByCategory
+  ).reduce((total, amount) => total + amount, 0);
+
+  // Calculate total expenses once
+  const totalExpense = Object.values(
+    categoryAnalytics.expenseByCategory
+  ).reduce((total, amount) => total + amount, 0);
 
   return (
     <Card>
@@ -53,15 +47,11 @@ const CategorySummary = () => {
           <ul className="space-y-3">
             {incomeCategories.map((category) => {
               const amount =
-                analytics.incomeByCategory[category];
-
-              const total = Object.values(
-                analytics.incomeByCategory
-              ).reduce((a, b) => a + b, 0);
+                categoryAnalytics.incomeByCategory[category];
 
               const percent =
-                total > 0
-                  ? Math.round((amount / total) * 100)
+                totalIncome > 0
+                  ? Math.round((amount / totalIncome) * 100)
                   : 0;
 
               return (
@@ -101,15 +91,11 @@ const CategorySummary = () => {
           <ul className="space-y-3">
             {expenseCategories.map((category) => {
               const amount =
-                analytics.expenseByCategory[category];
-
-              const total = Object.values(
-                analytics.expenseByCategory
-              ).reduce((a, b) => a + b, 0);
+                categoryAnalytics.expenseByCategory[category];
 
               const percent =
-                total > 0
-                  ? Math.round((amount / total) * 100)
+                totalExpense > 0
+                  ? Math.round((amount / totalExpense) * 100)
                   : 0;
 
               return (
