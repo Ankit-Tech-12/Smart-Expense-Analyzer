@@ -3,10 +3,25 @@ import SpendingSpikeAlert from "../components/SpendingSpikeAlert";
 import MonthlyComparison from "../components/MonthlyComparison";
 import AnimatedCard from "../components/AnimatedCard";
 import FinancialSummary from "../components/FinancialSummary";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
+
+const user = useSelector((state) => state.auth.user);
+
   return (
     <div className="space-y-4 sm:space-y-6">
+
+      <div>
+        <h1 className="text-2xl font-semibold text-white">
+          Welcome back, {user?.fullName || "User"} 
+        </h1>
+
+        <p className="text-sm text-gray-500 mt-1">
+          Here's your financial overview.
+        </p>
+      </div>
+
       <AnimatedCard delay={0}>
         <FinancialSummary />
       </AnimatedCard>

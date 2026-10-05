@@ -21,6 +21,10 @@ const incomeCategories = [
   "other",
 ];
 
+const getToday = () => {
+  return new Date().toISOString().split("T")[0];
+};
+
 const TransactionForm = ({
   mode = "add",
   initialData = null,
@@ -46,7 +50,7 @@ const TransactionForm = ({
   );
 
   const [date, setDate] = useState(
-    initialData?.date || ""
+    initialData?.date || getToday()
   );
 
   const [note, setNote] = useState(
@@ -69,7 +73,7 @@ const TransactionForm = ({
     setAmount(initialData.amount || "");
     setCategory(initialData.category || "");
     setSource(initialData.source || "");
-    setDate(initialData.date || "");
+    setDate(initialData.date || getToday());
     setNote(initialData.note || "");
   }, [initialData]);
 
@@ -80,23 +84,46 @@ const TransactionForm = ({
     setCategory("");
   };
 
-  const handleSubmit = (e) => {
+  const resetForm = () => {
+    // setType("expense");
+    setAmount("");
+    setCategory("");
+    setSource("");
+    setDate(getToday());
+    setNote("");
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    onSubmit({
-      amount: Number(amount),
-      type,
-      category: category.toLowerCase(),
-      source,
-      date,
-      note,
-    });
+    try {
+      await onSubmit({
+        amount: Number(amount),
+        type,
+        category: category.toLowerCase(),
+        source,
+        date,
+        note,
+      });
+
+      /*
+       * Only reset the form when adding
+       * a new transaction.
+       */
+      if (!isEdit) {
+        resetForm();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <div className="w-full max-w-2xl mx-auto px-1 sm:px-0 py-4 sm:py-6">
+
       {/* Page Header */}
       <div className="mb-5 sm:mb-6">
+
         {onCancel && isEdit && (
           <button
             type="button"
@@ -120,9 +147,11 @@ const TransactionForm = ({
 
       {/* Form Card */}
       <div className="bg-[#131c2e] border border-white/5 rounded-2xl shadow-xl shadow-black/20 overflow-hidden">
+
         {/* Card Header */}
         <div className="px-4 sm:px-6 py-4 border-b border-white/5">
           <div className="flex items-center justify-between gap-3">
+
             <div>
               <p className="text-sm font-medium text-gray-200">
                 Transaction details
@@ -144,6 +173,7 @@ const TransactionForm = ({
             >
               {type === "income" ? "Income" : "Expense"}
             </span>
+
           </div>
         </div>
 
@@ -151,6 +181,7 @@ const TransactionForm = ({
           onSubmit={handleSubmit}
           className="p-4 sm:p-6 space-y-5"
         >
+
           {/* Transaction Type */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -158,6 +189,7 @@ const TransactionForm = ({
             </label>
 
             <div className="grid grid-cols-2 gap-3">
+
               <button
                 type="button"
                 onClick={() =>
@@ -187,6 +219,7 @@ const TransactionForm = ({
                 <span className="mr-1.5">↗</span>
                 Income
               </button>
+
             </div>
           </div>
 
@@ -200,6 +233,7 @@ const TransactionForm = ({
             </label>
 
             <div className="relative">
+
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
                 ₹
               </span>
@@ -217,6 +251,7 @@ const TransactionForm = ({
                 className={`${inputClass} pl-9 text-lg font-medium`}
                 required
               />
+
             </div>
           </div>
 
@@ -238,6 +273,7 @@ const TransactionForm = ({
               className={`${inputClass} appearance-none cursor-pointer`}
               required
             >
+
               <option
                 value=""
                 className="bg-[#131c2e]"
@@ -255,6 +291,7 @@ const TransactionForm = ({
                     cat.slice(1)}
                 </option>
               ))}
+
             </select>
           </div>
 
@@ -343,6 +380,7 @@ const TransactionForm = ({
                 : "pt-2"
             }
           >
+
             {isEdit && (
               <button
                 type="button"
@@ -356,14 +394,18 @@ const TransactionForm = ({
             <button
               type="submit"
               className={`${
-                isEdit ? "w-full sm:flex-1" : "w-full"
+                isEdit
+                  ? "w-full sm:flex-1"
+                  : "w-full"
               } bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-semibold transition-all duration-150 shadow-lg shadow-blue-600/20 active:scale-[0.98]`}
             >
               {isEdit
                 ? "Update Transaction"
                 : "Add Transaction"}
             </button>
+
           </div>
+
         </form>
       </div>
     </div>
