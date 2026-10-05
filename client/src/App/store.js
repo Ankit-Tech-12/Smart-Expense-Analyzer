@@ -7,7 +7,7 @@ export const store=configureStore({
     reducer:{
         auth:authReducer,
         transactions:transactionsReducer,
-        categories: categoriesReducer, 
+        // categories: categoriesReducer, 
     }
 })
 
